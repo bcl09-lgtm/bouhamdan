@@ -1,1 +1,161 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تاريخ بلدية بوحمدان - قالمة</title>
+    <style>
+        :root {
+            --primary-color: #2e7d32; /* لون أخضر يرمز للطبيعة */
+            --accent-color: #c62828; /* لون أحمر يرمز للتاريخ والثورة */
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        header {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        h1 { margin-bottom: 10px; }
+        h2 { color: var(--primary-color); border-bottom: 2px solid var(--primary-color); padding-bottom: 5px; }
+
+        .highlight {
+            background: #e8f5e9;
+            padding: 15px;
+            border-right: 5px solid var(--primary-color);
+            margin: 20px 0;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            background: var(--primary-color);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>بلدية بوحمدان</h1>
+    <p>جوهرة ولاية قالمة وجزء من تاريخها العريق</p>
+</header>
+
+<div class="container">
+    <section>
+        <h2>نبذة تعريفية</h2>
+        <p>تقع بلدية <strong>بوحمدان</strong> في الجهة الغربية لولاية قالمة، وتتميز بطبيعتها الجبلية الخلابة ومناخها المنعش. تعتبر من المناطق الفلاحية الرائدة في الولاية، وتشتهر بإنتاج الحبوب وتربية المواشي.</p>
+    </section>
+
+    <div class="stats">
+        <div>📍 ولاية قالمة</div>
+        <div>🏞️ طبيعة جبلية</div>
+        <div>🏠 عراقة وأصالة</div>
+    </div>
+
+    <section>
+        <h2>التاريخ والنضال</h2>
+        <div class="highlight">
+            تعتبر بوحمدان منطقة ثورية بامتياز، حيث شهدت جبالها ومعالمها معارك ضارية إبان الثورة التحريرية الكبرى. قدمت المنطقة قوافل من الشهداء دفاعاً عن سيادة الوطن.
+        </div>
+        <p>ارتبط اسمها تاريخياً بالصمود، حيث كانت مأوى للمجاهدين بفضل تضاريسها الوعرة وغاباتها الكثيفة التي جعلت منها قلعة عصية على المستعمر الفرنسي.</p>
+    </section>
+
+    <section>
+        <h2>المعالم والسياحة</h2>
+        <p>تزخر البلدية بمناظر طبيعية تسحر الزوار، خاصة في فصلي الربيع والشتاء، حيث تكتسي الجبال حلة خضراء وتتدفق المنابع المائية، مما يجعلها مقصداً لمحبي السياحة الجبلية والهدوء.</p>
+    </section>
+</div>
+  <section>
+    <h2>معرض الصور: جمال بوحمدان</h2>
+    <div class="gallery">
+        <div class="gallery-item">
+            <img src="https://via.placeholder.com/400x300?text=طبيعة+بوحمدان" alt="طبيعة بوحمدان">
+            <p>المناظر الجبلية الخلابة</p>
+        </div>
+        <div class="gallery-item">
+            <img src="https://via.placeholder.com/400x300?text=سد+بوحمدان" alt="سد بوحمدان">
+            <p>الموارد المائية (سد بوحمدان)</p>
+        </div>
+        <div class="gallery-item">
+            <img src="https://via.placeholder.com/400x300?text=تاريخ+المنطقة" alt="تاريخ بوحمدان">
+            <p>معالم تاريخية ثورية</p>
+        </div>
+    </div>
+</section>
+
+<style>
+    .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .gallery-item {
+        background: #f9f9f9;
+        border-radius: 8px;
+        overflow: hidden;
+        text-align: center;
+        border: 1px solid #ddd;
+        transition: transform 0.3s;
+    }
+
+    .gallery-item:hover {
+        transform: scale(1.05); /* حركة تكبير خفيفة عند لمس الصورة */
+    }
+
+    .gallery-item img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+    }
+
+    .gallery-item p {
+        padding: 10px;
+        font-size: 0.9em;
+        margin: 0;
+    }
+</style>
+
+
+<footer>
+    تم إنشاء هذا الموقع لتوثيق تاريخ بلدية بوحمدان &copy; 2025
+</footer>
+  
+
+</body>
+</html>
+
 
