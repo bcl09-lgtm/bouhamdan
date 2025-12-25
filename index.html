@@ -91,6 +91,37 @@ text-align: center;
         <h2>نبذة تعريفية</h2>
         <p>تقع بلدية <strong>بوحمدان</strong> في الجهة الغربية لولاية قالمة، وتتميز بطبيعتها الجبلية الخلابة ومناخها المنعش. تعتبر من المناطق الفلاحية الرائدة في الولاية، وتشتهر بإنتاج الحبوب وتربية المواشي.</p>
     </section>
+    <div style="text-align: center; margin: 30px 0; font-family: Arial, sans-serif;">
+    
+    <button onclick="toggleMap()" style="background-color: #27ae60; color: white; padding: 12px 25px; border: none; border-radius: 30px; font-size: 18px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: 0.3s;">
+        📍 عرض موقع بوحمدان على الخريطة
+    </button>
+
+    <div id="mapContainer" style="display: none; margin-top: 20px; width: 100%; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+        <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12836.844321456015!2d7.1354!3d36.4528!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12f006722969598b%3A0x7ca102f18f18eb20!2sBouhamdane!5e0!3m2!1sar!2sdz!4v1700000000000" 
+            width="100%" 
+            height="350" 
+            style="border:0;" 
+            allowfullscreen="" 
+            loading="lazy">
+        </iframe>
+    </div>
+</div>
+
+<script>
+function toggleMap() {
+    var map = document.getElementById("mapContainer");
+    if (map.style.display === "none") {
+        map.style.display = "block";
+        // تمرير الصفحة لأسفل قليلاً لتظهر الخريطة بوضوح
+        map.scrollIntoView({ behavior: 'smooth' });
+    } else {
+        map.style.display = "none";
+    }
+}
+</script>
+
 
     <div class="stats">
         <div>📍 ولاية قالمة</div>
