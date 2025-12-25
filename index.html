@@ -161,45 +161,55 @@ function toggleMap() {
     border-radius: 5px;
   }
 </style>
-      <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>  
+      <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
 
-<div style="text-align: center; margin: 30px auto; padding: 20px; max-width: 90%; background: #f9f9f9; border: 2px dashed #27ae60; border-radius: 15px;">
-    <h3 style="color: #27ae60; font-family: sans-serif;">مشاركة صور بوحمدان</h3>
-    <p style="font-size: 14px; color: #666;">اضغط على الزر أدناه لرفع صورتك من معرض الهاتف</p>
-    
-    <button id="upload_widget" style="background: #27ae60; color: white; border: none; padding: 15px 30px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; max-width: 250px;">
-        📸 ارفع صورتك الآن
+<div style="text-align: center; margin: 20px; padding: 20px; border: 2px dashed #27ae60; border-radius: 15px;">
+    <button id="upload_widget" style="background: #27ae60; color: white; padding: 15px; border-radius: 10px; border: none; font-weight: bold; width: 100%;">
+        📸 شاركنا صورة لجمال بوحمدان
     </button>
 </div>
 
-<script type="text/javascript">  
-    var myWidget = cloudinary.createUploadWidget({
-        cloudName: 'merwan', 
-        uploadPreset: 'bouhamdan',
-        sources: ['local', 'camera'],
-        clientAllowedFormats: ['png', 'jpg', 'jpeg'],
-        language: 'ar',
-        text: {
-            "ar": {
-                "menu": { "select_file": "اختر صورة", "camera": "الكاميرا" },
-                "local": { "browse": "تصفح الصور", "dd_instruction": "اسحب الصور هنا" }
-            }
-        }
-    }, (error, result) => { 
-        if (!error && result && result.event === "success") { 
-            alert('✅ تم الرفع بنجاح! ستظهر صورتك بعد مراجعة المسؤول.');
-            console.log('رابط الصورة:', result.info.secure_url);
-        }
-        if (error) {
-            console.error('هناك مشكلة:', error);
-        }
-    });
+<div id="gallery" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; padding: 15px;">
+    </div>
 
-    // تشغيل النافذة عند الضغط
-    document.getElementById("upload_widget").addEventListener("click", function(){
-        myWidget.open();
-    }, false);
+<script type="text/javascript">
+const myCloudName = 'merwan';
+const myPreset = 'bouhamdan'; // تأكد أنه مكتوب كما سميته أنت
+
+// إعداد زر الرفع مع إضافة الوسم (Tag) تلقائياً
+var myWidget = cloudinary.createUploadWidget({
+    cloudName: myCloudName,
+    uploadPreset: myPreset,
+    tags: ['bouhamdan_image'], // وضع الوسم هنا من خلال الكود
+    sources: ['local', 'camera'],
+    language: 'ar'
+}, (error, result) => {
+    if (!error && result && result.event === "success") {
+        alert('✅ وصلت الصورة! ستظهر في الموقع بعد مراجعة المسؤول.');
+    }
+});
+
+document.getElementById("upload_widget").onclick = () => myWidget.open();
+
+// كود جلب الصور وعرضها تلقائياً
+function loadGallery() {
+    // هذا الرابط يجلب الصور التي تحمل الوسم المحدد فقط
+    fetch(`https://res.cloudinary.com/${myCloudName}/image/list/bouhamdan_image.json`)
+    .then(res => res.json())
+    .then(data => {
+        const gallery = document.getElementById('gallery');
+        gallery.innerHTML = ''; // تنظيف المعرض قبل العرض
+        data.resources.forEach(img => {
+            const url = `https://res.cloudinary.com/${myCloudName}/image/upload/v${img.version}/${img.public_id}.${img.format}`;
+            gallery.innerHTML += `<img src="${url}" style="width:100%; border-radius:10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">`;
+        });
+    }).catch(err => console.log("بانتظار الصور المعتمدة..."));
+}
+
+// تشغيل جلب الصور عند فتح الصفحة
+loadGallery();
 </script>
+
 
 
 
