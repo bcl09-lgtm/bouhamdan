@@ -75,6 +75,40 @@ text-align: center;
             color: #666;
         }
     </style>
+    <style>
+    /* تعريف ألوان الوضعين */
+:root {
+    /* ألوان النهار */
+    --bg-color: #ffffff;
+    --text-color: #333333;
+    --card-bg: #f9f9f9;
+    --header-gradient: linear-gradient(135deg, #007bff, #00d2ff);
+}
+
+[data-theme="dark"] {
+    /* ألوان الليل */
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --card-bg: #1e1e1e;
+    --header-gradient: linear-gradient(135deg, #2c3e50, #000000);
+}
+
+/* تطبيق الألوان على عناصر الموقع */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.8s ease, color 0.8s ease; /* انتقال ناعم */
+}
+
+/* إذا كان لديك كروت أو حاويات، طبق عليها المتغيرات */
+.gallery-container, .image-card {
+    background-color: var(--card-bg);
+}
+
+header {
+    background: var(--header-gradient) !important;
+}
+</style>
 </head>
 <body>
 <div style="background-color: #fff3cd; color: #856404; padding: 10px; text-align: center; border: 1px solid #ffeeba;">
@@ -441,9 +475,34 @@ function copyLink() {
     }
  </script>
     
+    
   
 
-  
+<script>
+function applyAutoTheme() {
+    // جلب الساعة الحالية من جهاز المستخدم
+    const hour = new Date().getHours();
+    const bodyElement = document.body;
+
+    // تحديد أوقات الليل: من الساعة 6 مساءً (18) حتى 6 صباحاً (6)
+    const isNightTime = (hour >= 18 || hour < 6);
+
+    if (isNightTime) {
+        // تفعيل الوضع الليلي
+        bodyElement.setAttribute('data-theme', 'dark');
+        console.log("تم تفعيل الوضع الليلي 🌙");
+    } else {
+        // تفعيل وضع النهار
+        bodyElement.removeAttribute('data-theme');
+        console.log("تم تفعيل وضع النهار ☀️");
+    }
+}
+
+// تشغيل الوظيفة فور فتح الصفحة
+window.onload = applyAutoTheme;
+</script>
+    
+
 
 </body>
 </html>
