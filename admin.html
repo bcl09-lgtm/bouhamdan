@@ -28,56 +28,56 @@
 </div>
 
 <script>
-async function uploadImage() {
+    async function uploadImage() {
     const fileInput = document.getElementById('fileInput');
-    const token = document.getElementById('token').value;
-    const status = document.getElementById('status');
-    
-    if (fileInput.files.length === 0 || !token) {
-        alert("يرجى اختيار صورة وإدخال المفتاح");
+    const file = fileInput.files[0];
+    if (!file) {
+        alert("يرجى اختيار صورة أولاً!");
         return;
     }
 
-    const file = fileInput.files[0];
-    const reader = new FileReader();
+    // 1. فحص هل المستخدم اختار "غار جماعة" أم لا
+    const isGhar = document.getElementById('isGhar').checked;
     
-    status.innerText = "جاري التحضير...";
+    // 2. تحديد المجلد (إذا كان صح يرسل لـ Ghar، وإذا لا يرسل للمجلد العام)
+    const folderPath = isGhar ? "Ghar/" : "";
 
-    reader.onload = async function() {
+    const fileName = encodeURIComponent(file.name);
+    // 3. بناء الرابط الصحيح مع المجلد المختار
+    const uploadUrl = `https://api.github.com/repos/Bcl09-lgtm/bohamdan/contents/photos/${folderPath}${fileName}`;
+
+    const reader = new FileReader();
+    reader.onload = async () => {
         const content = reader.result.split(',')[1];
-        const fileName = "img_" + Date.now() + ".jpg"; // تسمية الصورة بالوقت
         
-        // معلومات حسابك (يجب تعديلها)
-        const owner = "bcl09-lgtm"; 
-        const repo = "bouhamdan";
-
-        status.innerText = "جاري الرفع إلى GitHub...";
-
         try {
-            const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/photos/${fileName}`, {
-                method: "PUT",
+            const response = await fetch(uploadUrl, {
+                method: 'PUT',
                 headers: {
-                    "Authorization": `token ${token}`,
-                    "Content-Type": "application/json"
+                    'Authorization': 'token YOUR_GITHUB_TOKEN', // ضع توكن الخاص بك هنا
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    message: "إضافة صورة جديدة من الهاتف",
+                    message: `رفع صورة جديدة إلى ${isGhar ? 'غار جماعة' : 'المعرض العام'}`,
                     content: content
                 })
             });
 
             if (response.ok) {
-                status.innerText = "✅ تم الرفع بنجاح!";
-                fileInput.value = "";
+                alert(isGhar ? "تم الرفع بنجاح إلى مجلد غار جماعة! ✅" : "تم الرفع بنجاح إلى المعرض العام! ✅");
+                fileInput.value = ""; // تفريغ خانة الاختيار
+                document.getElementById('isGhar').checked = false; // إلغاء تحديد المربع
             } else {
-                status.innerText = "❌ فشل الرفع. تأكد من المفتاح.";
+                const errorData = await response.json();
+                alert("فشل الرفع: " + errorData.message);
             }
         } catch (error) {
-            status.innerText = "❌ حدث خطأ في الاتصال.";
+            alert("حدث خطأ في الاتصال: " + error.message);
         }
     };
     reader.readAsDataURL(file);
 }
+
 </script>
 </body>
 </html>
