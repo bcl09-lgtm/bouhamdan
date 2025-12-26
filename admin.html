@@ -16,6 +16,11 @@
 
 <div class="card">
     <h2>تطبيق رفع الصور المباشر</h2>
+    <div style="margin: 10px 0; background: #eee; padding: 10px; border-radius: 5px;">
+    <input type="checkbox" id="isGhar">
+    <label for="isGhar">هل هذه الصورة خاصة بـ "غار جماعة"؟</label>
+</div>
+
     <input type="file" id="fileInput" accept="image/*">
     <input type="password" id="token" placeholder="أدخل مفتاح GitHub (Token)">
     <button onclick="uploadImage()">رفع الصورة الآن</button>
