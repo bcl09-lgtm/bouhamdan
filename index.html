@@ -75,6 +75,20 @@ text-align: center;
             color: #666;
         }
     </style>
+    <style>
+/* كود التأثير الذي أعطيتك إياه */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s ease-out;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
+
 
 </head>
 <body>
@@ -493,6 +507,28 @@ function copyLink() {
         transform: scale(1.1); /* يكبر قليلاً */
     }
 </style>
+    <script>
+function reveal() {
+  var reveals = document.querySelectorAll(".image-card, .photo-item, img"); // سيبحث عن كل الصور أو كروت الصور
+
+  for (var i = 0; i < reveals.length; i++) {
+    var windowHeight = window.innerHeight;
+    var elementTop = reveals[i].getBoundingClientRect().top;
+    var elementVisible = 150; // المسافة التي يبدأ عندها التأثير
+
+    if (elementTop < windowHeight - elementVisible) {
+      reveals[i].classList.add("active");
+    }
+  }
+}
+
+// تشغيل الوظيفة عند التمرير
+window.addEventListener("scroll", reveal);
+
+// لتشغيلها أيضاً فور تحميل الصفحة للصور الظاهرة بالأعلى
+window.onload = reveal;
+</script>
+
 
     
 
