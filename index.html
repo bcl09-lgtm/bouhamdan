@@ -87,13 +87,88 @@ text-align: center;
 </header>
 
 <div class="container">
-    <section>
-        <div style="max-width: 500px; margin: 20px auto; padding: 10px; border-radius: 15px; overflow: hidden; direction: ltr;">
-    <a class="weatherwidget-io" href="https://forecast7.com/ar/36d477d24/bouhamdane/" data-label_1="بوحمدان - BOHAMDANE" data-label_2="حالة الطقس الحالية" data-font="Cairo" data-icons="Climacons Animated" data-theme="pure" >بوحمدان - BOHAMDANE حالة الطقس الحالية</a>
-    <script>
-    !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
-    </script>
+    <div id="weather-card" style="
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    background: linear-gradient(135deg, #74b9ff, #0984e3); /* لون افتراضي */
+    color: white;
+    padding: 8px 18px; 
+    border-radius: 50px; 
+    max-width: fit-content; 
+    margin: 15px auto; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    font-family: 'Cairo', sans-serif;
+    transition: all 1s ease; /* انتقال ناعم للألوان */
+">
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <div id="weather-icon" class="weather-icon" style="font-size: 22px;">☀️</div>
+        <div style="display: flex; flex-direction: column;">
+            <span style="font-size: 13px; font-weight: bold;">بوحمدان</span>
+            <span id="weather-desc" style="font-size: 9px; opacity: 0.9;">جاري التحميل...</span>
+        </div>
+    </div>
+    
+    <div style="margin-right: 15px; border-right: 1px dotted rgba(255,255,255,0.5); padding-right: 12px;">
+        <span id="temp-val" style="font-size: 20px; font-weight: 800;">--°</span>
+    </div>
 </div>
+
+<style>
+.weather-icon { animation: float 3s ease-in-out infinite; }
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-4px); }
+}
+</style>
+
+<script>
+async function updateWeatherTheme() {
+    const card = document.getElementById('weather-card');
+    const icon = document.getElementById('weather-icon');
+    const desc = document.getElementById('weather-desc');
+    const tempVal = document.getElementById('temp-val');
+
+    try {
+        const lat = 36.47; const lon = 7.24;
+        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+        const data = await res.json();
+        const temp = Math.round(data.current_weather.temperature);
+        const code = data.current_weather.weathercode;
+
+        tempVal.innerText = temp + "°";
+
+        // تغيير الواجهة بناءً على رمز حالة الجو (Weather Codes)
+        if (code <= 1) { // صافي
+            card.style.background = "linear-gradient(135deg, #fbc531, #e1b12c)";
+            icon.innerText = "☀️";
+            desc.innerText = "جو مشرق";
+        } else if (code <= 3) { // غائم جزئياً
+            card.style.background = "linear-gradient(135deg, #74b9ff, #0984e3)";
+            icon.innerText = "🌤️";
+            desc.innerText = "غائم جزئياً";
+        } else if (code <= 48) { // ضباب
+            card.style.background = "linear-gradient(135deg, #bdc3c7, #2c3e50)";
+            icon.innerText = "🌫️";
+            desc.innerText = "ضبابي";
+        } else if (code <= 67) { // مطر
+            card.style.background = "linear-gradient(135deg, #4b7bec, #3867d6)";
+            icon.innerText = "🌧️";
+            desc.innerText = "ممطر";
+        } else { // عواصف أو ثلج
+            card.style.background = "linear-gradient(135deg, #34495e, #2c3e50)";
+            icon.innerText = "⛈️";
+            desc.innerText = "غير مستقر";
+        }
+    } catch (e) {
+        desc.innerText = "بوحمدان";
+    }
+}
+updateWeatherTheme();
+</script>
+
+    <section>
+        
 
         <h2>نبذة تعريفية</h2>
         <p>تقع بلدية <strong>بوحمدان</strong> في الجهة الغربية لولاية قالمة، وتتميز بطبيعتها الجبلية الخلابة ومناخها المنعش. تعتبر من المناطق الفلاحية الرائدة في الولاية، وتشتهر بإنتاج الحبوب وتربية المواشي.</p>
