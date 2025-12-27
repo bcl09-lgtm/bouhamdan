@@ -185,6 +185,142 @@ window.addEventListener('load', typeEffect);
     <h1>بلدية بوحمدان</h1>
     <p>جوهرة ولاية قالمة وجزء من تاريخها العريق</p>
 </header>
+    
+<div id="prayer-and-dhikr-section">
+    <style>
+        .main-prayer-wrapper {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            max-width: 600px;
+            margin: 20px auto;
+            font-family: sans-serif;
+            direction: rtl;
+            overflow: hidden; /* لمنع خروج الشريط عن الإطار */
+        }
+        .prayer-title {
+            text-align: center;
+            color: #1b5e20;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .prayer-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .prayer-card-item {
+            background: #f1f8e9;
+            padding: 12px 5px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #e8f5e9;
+        }
+        .next-p { background: #2e7d32 !important; color: white !important; }
+        .next-p span { color: white !important; }
+        .p-name { display: block; font-size: 0.85rem; color: #555; }
+        .p-time { display: block; font-size: 1rem; font-weight: bold; }
+
+        /* تصميم شريط الأذكار */
+        .dhikr-bar {
+            background: #e8f5e9;
+            padding: 10px 0;
+            border-radius: 10px;
+            border-right: 4px solid #2e7d32;
+            overflow: hidden;
+            position: relative;
+            white-space: nowrap;
+        }
+        .dhikr-text {
+            display: inline-block;
+            padding-right: 100%; /* لتبدأ الحركة من الخارج */
+            animation: marquee 20s linear infinite;
+            color: #2e7d32;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+        @keyframes marquee {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(100%, 0); }
+        }
+        @media (max-width: 450px) {
+            .prayer-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+
+    <div class="main-prayer-wrapper">
+        <div class="prayer-title">🕋 مواقيت الصلاة والأذكار</div>
+        
+        <div id="prayers-list" class="prayer-grid">
+            <p style="grid-column: 1/-1; text-align: center;">جاري جلب المواقيت...</p>
+        </div>
+
+        <div class="dhikr-bar">
+            <div id="dhikr-content" class="dhikr-text">جاري جلب ذكر اليوم...</div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // 1. جلب مواقيت الصلاة
+            async function getPrayers() {
+                try {
+                    const response = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Guelma&country=Algeria&method=3');
+                    const result = await response.json();
+                    const t = result.data.timings;
+                    const pMap = [
+                        { id: 'Fajr', n: 'الفجر' }, { id: 'Sunrise', n: 'الشروق' },
+                        { id: 'Dhuhr', n: 'الظهر' }, { id: 'Asr', n: 'العصر' },
+                        { id: 'Maghrib', n: 'المغرب' }, { id: 'Isha', n: 'العشاء' }
+                    ];
+                    const now = new Date();
+                    const cMin = now.getHours() * 60 + now.getMinutes();
+                    let foundNext = false;
+                    const list = document.getElementById('prayers-list');
+                    list.innerHTML = '';
+                    pMap.forEach(p => {
+                        const [h, m] = t[p.id].split(':');
+                        const pMin = parseInt(h) * 60 + parseInt(m);
+                        let isNext = (!foundNext && pMin > cMin);
+                        if (isNext) foundNext = true;
+                        list.innerHTML += `<div class="prayer-card-item ${isNext ? 'next-p' : ''}">
+                            <span class="p-name">${p.n}</span>
+                            <span class="p-time">${t[p.id]}</span>
+                        </div>`;
+                    });
+                } catch (e) { console.error("Prayer error"); }
+            }
+
+            // 2. جلب الأذكار المتجددة
+            const adhkars = [
+                "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ ، سُبْحَانَ اللَّهِ الْعَظِيمِ",
+                "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ الْعَلِيِّ الْعَظِيمِ",
+                "اللَّهُمَّ صَلِّ وَسَلِّمْ وَبَارِكْ عَلَى نَبِيِّنَا مُحَمَّدٍ",
+                "لَا إِلَهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ",
+                "أستغفر الله العظيم الذي لا إله إلا هو الحي القيوم وأتوب إليه",
+                "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
+                "الحمد لله حمداً كثيراً طيباً مباركاً فيه"
+            ];
+
+            function rotateDhikr() {
+                const content = document.getElementById('dhikr-content');
+                // اختيار ذكر عشوائي في كل مرة تنتهي فيها الدورة أو يتم تحديث الصفحة
+                const randomDhikr = adhkars[Math.floor(Math.random() * adhkars.length)];
+                content.innerText = randomDhikr;
+            }
+
+            // تشغيل الوظائف
+            getPrayers();
+            rotateDhikr();
+            
+            // تغيير الذكر تلقائياً كل 20 ثانية (مع انتهاء حركة الشريط)
+            setInterval(rotateDhikr, 20000);
+        })();
+    </script>
+</div>
 
 <div class="container">
     <div id="weather-card" style="
