@@ -192,155 +192,130 @@ window.addEventListener('load', typeEffect);
             background: #ffffff;
             border-radius: 20px;
             padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             max-width: 600px;
             margin: 20px auto;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             direction: rtl;
-            overflow: hidden;
-            border: 1px solid #eee;
         }
         .prayer-title {
             text-align: center;
             color: #1b5e20;
             font-size: 1.4rem;
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         .prayer-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         .prayer-card-item {
-            background: #f9fdf9;
+            background: #f1f8e9;
             padding: 15px 5px;
-            border-radius: 15px;
+            border-radius: 12px;
             text-align: center;
             border: 1px solid #e8f5e9;
-            transition: 0.3s;
         }
         .next-p { 
             background: #2e7d32 !important; 
             color: white !important;
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3);
+            box-shadow: 0 4px 10px rgba(46, 125, 50, 0.4);
         }
         .next-p span { color: white !important; }
-        .p-name { display: block; font-size: 0.9rem; color: #666; font-weight: bold; margin-bottom: 5px; }
-        .p-time { display: block; font-size: 1.1rem; font-weight: 900; color: #222; }
-
+        
         .dhikr-bar {
             background: #2e7d32;
             padding: 12px 0;
-            border-radius: 12px;
+            border-radius: 10px;
             overflow: hidden;
+            white-space: nowrap;
             position: relative;
         }
         .dhikr-text {
             display: inline-block;
-            white-space: nowrap;
-            animation: marquee-dhikr 25s linear infinite;
+            animation: marquee-dhikr 12s linear infinite; /* سرعة ممتازة */
             color: #ffffff;
             font-weight: bold;
             font-size: 1.1rem;
-            padding-right: 100%;
+            padding-left: 100%;
         }
         @keyframes marquee-dhikr {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
         }
-        @media (max-width: 450px) {
-            .prayer-grid { grid-template-columns: repeat(2, 1fr); }
-        }
+        @media (max-width: 450px) { .prayer-grid { grid-template-columns: repeat(2, 1fr); } }
     </style>
 
     <div class="main-prayer-wrapper">
         <div class="prayer-title">🕋 مواقيت الصلاة - بوحمدان</div>
         <div id="prayers-list" class="prayer-grid">
-            <p style="grid-column: 1/-1; text-align: center;">جاري ضبط المواقيت بدقة...</p>
-        </div>
+            </div>
         <div class="dhikr-bar">
             <div id="dhikr-content" class="dhikr-text">سُبْحَانَ اللَّهِ وَبِحَمْدِهِ ، سُبْحَانَ اللَّهِ الْعَظِيمِ</div>
         </div>
     </div>
 
     <script>
-        (function() {
-            // إحداثيات بوحمدان الدقيقة لضمان صحة الأوقات 100%
-            const LAT = 36.4608;
-            const LNG = 7.2882;
+        // أذكار صحيحة من حصن المسلم
+        const azkar = [
+            "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ ، سُبْحَانَ اللَّهِ الْعَظِيمِ",
+            "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
+            "أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ",
+            "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ",
+            "الْحَمْدُ لِلَّهِ حَمْدًا كَثِيرًا طَيِّبًا مُبَارَكًا فِيهِ",
+            "اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ"
+        ];
 
-            async function fetchAccuratePrayers() {
-                try {
-                    // الاتصال بـ API العالمي باستخدام الإحداثيات الجغرافية
-                    const url = `https://api.aladhan.com/v1/timingsByAddress?address=Bouhamdane,Guelma,Algeria&method=3`;
-                    const res = await fetch(url);
-                    const data = await res.json();
-                    if(data.code === 200) {
-                        displayPrayers(data.data.timings);
-                    }
-                } catch (error) {
-                    console.error("خطأ في جلب البيانات، سيتم المحاولة مجدداً");
-                    // في حال فشل الاتصال، نحاول مرة أخرى بعد 30 ثانية
-                    setTimeout(fetchAccuratePrayers, 30000);
-                }
-            }
+        function rotateAzkar() {
+            const el = document.getElementById('dhikr-content');
+            el.innerText = azkar[Math.floor(Math.random() * azkar.length)];
+        }
 
-            function displayPrayers(timings) {
-                const prayerMap = [
-                    {key: 'Fajr', label: 'الفجر'}, {key: 'Sunrise', label: 'الشروق'},
-                    {key: 'Dhuhr', label: 'الظهر'}, {key: 'Asr', label: 'العصر'},
-                    {key: 'Maghrib', label: 'المغرب'}, {key: 'Isha', label: 'العشاء'}
-                ];
-
-                const now = new Date();
-                const currentTotalMinutes = now.getHours() * 60 + now.getMinutes();
-                let nextFound = false;
-
-                const grid = document.getElementById('prayers-list');
-                grid.innerHTML = '';
-
-                prayerMap.forEach(p => {
-                    const [hour, minute] = timings[p.key].split(':');
-                    const prayerTotalMinutes = parseInt(hour) * 60 + parseInt(minute);
-                    
-                    let isNext = false;
-                    if (!nextFound && prayerTotalMinutes > currentTotalMinutes) {
-                        isNext = true;
-                        nextFound = true;
-                    }
-
-                    grid.innerHTML += `
-                        <div class="prayer-card-item ${isNext ? 'next-p' : ''}">
-                            <span class="p-name">${p.label}</span>
-                            <span class="p-time">${timings[p.key]}</span>
-                        </div>`;
-                });
-            }
-
-            const adhkars = [
-                "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ ، سُبْحَانَ اللَّهِ الْعَظِيمِ",
-                "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ الْعَلِيِّ الْعَظِيمِ",
-                "اللَّهُمَّ صَلِّ وَسَلِّمْ وَبَارِكْ عَلَى نَبِيِّنَا مُحَمَّدٍ",
-                "لَا إِلَهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ",
-                "أستغفر الله العظيم وأتوب إليه",
-                "يا حي يا قيوم برحمتك أستغيث",
-                "اللهم ارحم موتنا وموتى المسلمين"
+        // دالة المعالجة لاستلام البيانات بدقة إحداثيات بوحمدان
+        function handlePrayerData(response) {
+            const timings = response.data.timings;
+            const prayerNames = [
+                {id: 'Fajr', n: 'الفجر'}, {id: 'Sunrise', n: 'الشروق'},
+                {id: 'Dhuhr', n: 'الظهر'}, {id: 'Asr', n: 'العصر'},
+                {id: 'Maghrib', n: 'المغرب'}, {id: 'Isha', n: 'العشاء'}
             ];
+            
+            const now = new Date();
+            const currentMin = now.getHours() * 60 + now.getMinutes();
+            let foundNext = false;
+            let output = '';
 
-            function rotateDhikr() {
-                document.getElementById('dhikr-content').innerText = adhkars[Math.floor(Math.random() * adhkars.length)];
-            }
+            prayerNames.forEach(p => {
+                const [h, m] = timings[p.id].split(':');
+                const pMin = parseInt(h) * 60 + parseInt(m);
+                let isNext = (!foundNext && pMin > currentMin);
+                if (isNext) foundNext = true;
 
-            fetchAccuratePrayers();
-            setInterval(rotateDhikr, 25000);
-            // تحديث الأوقات تلقائياً كل 6 ساعات لضمان الدقة في حال تغير التاريخ
-            setInterval(fetchAccuratePrayers, 21600000);
-        })();
+                output += `
+                <div class="prayer-card-item ${isNext ? 'next-p' : ''}">
+                    <span style="display:block; font-size:0.85rem; font-weight:600;">${p.n}</span>
+                    <span style="font-size:1.1rem; font-weight:bold;">${timings[p.id]}</span>
+                </div>`;
+            });
+            document.getElementById('prayers-list').innerHTML = output;
+        }
+
+        // استخدام JSONP لضمان العمل في index.html مباشرة بدون حظر أمني
+        // الإحداثيات هنا لبوحمدان بالضبط: latitude=36.46 & longitude=7.28
+        const script = document.createElement('script');
+        script.src = `https://api.aladhan.com/v1/timings?latitude=36.4608&longitude=7.2882&method=3&callback=handlePrayerData`;
+        document.body.appendChild(script);
+
+        // تحديث الذكر كل دورة شريط
+        setInterval(rotateAzkar, 12000);
     </script>
 </div>
+
+
+    
+ 
 
 
         
