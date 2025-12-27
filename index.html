@@ -271,6 +271,96 @@ updateWeatherTheme();
     <p id="road-text" style="margin: 5px 0 0; color: #2c3e50; font-size: 14px;">الطريق إلى غار جماعة مفتوح وجميل، نتمنى لكم رحلة ممتعة.</p>
 </div>
     
+    <div id="bouhamdan-slider-container" style="direction: ltr; position: relative; width: 100%; max-width: 800px; margin: 0 auto 30px auto; overflow: hidden; border-radius: 12px; background: #000; height: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+    
+    <div id="slider-wrapper" style="display: flex; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);">
+        </div>
+
+    <div id="slider-dots" style="position: absolute; bottom: 15px; width: 100%; display: flex; justify-content: center; gap: 6px; z-index: 5;"></div>
+
+    <style>
+        #bouhamdan-slider-container img { width: 100%; height: 100%; flex-shrink: 0; object-fit: cover; }
+        .s-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.3); transition: 0.3s; cursor: pointer; }
+        .s-dot.active { background: #fff; width: 20px; border-radius: 4px; }
+    </style>
+</div>
+
+<script>
+(function() {
+    let sIdx = 0;
+    let sTimer;
+
+    function buildSlider() {
+        // التأكد من وجود مصفوفة الصور التي يجلبها موقعك من GitHub
+        if (typeof allImages === 'undefined' || allImages.length === 0) {
+            // محاولة جلب الصور إذا لم تكن قد جُلبت بعد
+            if (typeof fetchAllImages === 'function') fetchAllImages();
+            return;
+        }
+
+        const wrap = document.getElementById('slider-wrapper');
+        const dots = document.getElementById('slider-dots');
+        
+        // منع التكرار
+        if (wrap.children.length > 0 && wrap.querySelector('img')) return;
+
+        wrap.innerHTML = "";
+        dots.innerHTML = "";
+
+        // نأخذ أول 10 صور من المعرض للسلايدر لتكون خفيفة
+        const sliderPhotos = allImages.slice(0, 10);
+
+        sliderPhotos.forEach((file, i) => {
+            const img = document.createElement('img');
+            img.src = file.download_url;
+            wrap.appendChild(img);
+
+            const dot = document.createElement('div');
+            dot.className = 's-dot';
+            dot.onclick = () => showS(i);
+            dots.appendChild(dot);
+        });
+        updateS();
+        startS(); // بدء التحريك التلقائي
+    }
+
+    function showS(index) {
+        const wrap = document.getElementById('slider-wrapper');
+        const total = wrap.children.length;
+        if (total === 0) return;
+        sIdx = (index + total) % total;
+        wrap.style.transform = `translateX(-${sIdx * 100}%)`;
+        updateS();
+    }
+
+    function updateS() {
+        const d = document.getElementById('slider-dots').children;
+        for (let i = 0; i < d.length; i++) {
+            if(d[i]) d[i].className = (i === sIdx) ? 's-dot active' : 's-dot';
+        }
+    }
+
+    function nextS() { showS(sIdx + 1); }
+    function startS() { stopS(); sTimer = setInterval(nextS, 4500); }
+    function stopS() { clearInterval(sTimer); }
+
+    // مراقبة وصول الصور من GitHub
+    const checkInterval = setInterval(() => {
+        if (typeof allImages !== 'undefined' && allImages.length > 0) {
+            buildSlider();
+            clearInterval(checkInterval);
+        }
+    }, 1000);
+
+    // توقف عند اللمس لراحة الزائر
+    const container = document.getElementById('bouhamdan-slider-container');
+    container.onmouseenter = stopS;
+    container.onmouseleave = startS;
+    container.ontouchstart = stopS;
+    container.ontouchend = startS;
+})();
+</script>
+
  
 
 
