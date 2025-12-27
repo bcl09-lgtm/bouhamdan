@@ -136,7 +136,7 @@ async function updateWeatherTheme() {
     try {
         const lat = 36.47; const lon = 7.24;
         const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
-        const data = await res.json();
+        const data = await res.json(updateRoadStatus(data.main.temp, data.weather[0].description); );
         const temp = Math.round(data.current_weather.temperature);
         const code = data.current_weather.weathercode;
 
@@ -170,6 +170,39 @@ async function updateWeatherTheme() {
 }
 updateWeatherTheme();
 </script>
+    <div id="road-status-card" style="background: #f0fff4; border-right: 5px solid #2ecc71; padding: 15px; border-radius: 8px; margin: 20px; font-family: 'Cairo'; transition: all 0.5s ease;">
+    <strong id="road-title" style="color: #27ae60;">✅ حالة الطريق:</strong>
+    <p id="road-text" style="margin: 5px 0 0; color: #2c3e50; font-size: 14px;">الطريق إلى غار جماعة مفتوح وجميل، نتمنى لكم رحلة ممتعة.</p>
+</div>
+
+<script>
+function updateRoadStatus(temp, weatherDesc) {
+    const card = document.getElementById('road-status-card');
+    const title = document.getElementById('road-title');
+    const text = document.getElementById('road-text');
+
+    // إذا كانت هناك ثلوج أو الحرارة منخفضة جداً
+    if (weatherDesc.includes("snow") || weatherDesc.includes("ثلج") || temp <= 2) {
+        card.style.background = "#fff5f5";
+        card.style.borderRightColor = "#ff4d4d";
+        title.style.color = "#d63031";
+        title.innerText = "⚠️ تحذير بخصوص الطريق:";
+        text.innerText = "بسبب تساقط الثلوج، الطريق إلى غار جماعة قد يكون صعباً أو مغلقاً. يرجى توخي الحذر الشديد.";
+    } 
+    // إذا كان الجو ممطراً بغزارة
+    else if (weatherDesc.includes("rain") || weatherDesc.includes("مطر")) {
+        card.style.background = "#fff9db";
+        card.style.borderRightColor = "#f1c40f";
+        title.style.color = "#f39c12";
+        title.innerText = "⚠️ طريق زلق:";
+        text.innerText = "الأمطار تتساقط الآن، يرجى الحذر من الانزلاقات في المنعرجات الجبلية.";
+    }
+}
+
+// ملاحظة: يجب استدعاء هذه الوظيفة (updateRoadStatus) 
+// داخل كود الطقس الذي برمجته سابقاً بعد جلب البيانات بنجاح.
+</script>
+
 
     <section>
         
