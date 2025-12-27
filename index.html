@@ -233,7 +233,7 @@ async function updateWeatherTheme() {
         const lat = 36.47; const lon = 7.24;
         const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
         const data = await res.json(updateRoadStatus(data.main.temp, data.weather[0].description); );
-        const temp = Math.round(data.current_weather.temperature);
+        const temp = Math.round();
         const code = data.current_weather.weathercode;
 
         tempVal.innerText = temp + "°";
