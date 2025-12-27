@@ -270,35 +270,10 @@ updateWeatherTheme();
     <strong id="road-title" style="color: #27ae60;">✅ حالة الطريق:</strong>
     <p id="road-text" style="margin: 5px 0 0; color: #2c3e50; font-size: 14px;">الطريق إلى غار جماعة مفتوح وجميل، نتمنى لكم رحلة ممتعة.</p>
 </div>
+    
 
-<script>
-function updateRoadStatus(temp, weatherDesc) {
-    const card = document.getElementById('road-status-card');
-    const title = document.getElementById('road-title');
-    const text = document.getElementById('road-text');
 
-    // إذا كانت هناك ثلوج أو الحرارة منخفضة جداً
-    if (weatherDesc.includes("snow") || weatherDesc.includes("ثلج") || temp <= 2) {
-        card.style.background = "#fff5f5";
-        card.style.borderRightColor = "#ff4d4d";
-        title.style.color = "#d63031";
-        title.innerText = "⚠️ تحذير بخصوص الطريق:";
-        text.innerText = "بسبب تساقط الثلوج، الطريق إلى غار جماعة قد يكون صعباً أو مغلقاً. يرجى توخي الحذر الشديد.";
-    } 
-    // إذا كان الجو ممطراً بغزارة
-    else if (weatherDesc.includes("rain") || weatherDesc.includes("مطر")) {
-        card.style.background = "#fff9db";
-        card.style.borderRightColor = "#f1c40f";
-        title.style.color = "#f39c12";
-        title.innerText = "⚠️ طريق زلق:";
-        text.innerText = "الأمطار تتساقط الآن، يرجى الحذر من الانزلاقات في المنعرجات الجبلية.";
-    }
-}
-
-// ملاحظة: يجب استدعاء هذه الوظيفة (updateRoadStatus) 
-// داخل كود الطقس الذي برمجته سابقاً بعد جلب البيانات بنجاح.
-</script>
-
+        
 
     <section>
         
@@ -647,7 +622,49 @@ function copyLink() {
         }
     });
 </script>
+    <script>
+    
+async function getWeather() {
+    const city = "Guelma"; 
+    const apiKey = "87f3b603316c68a5c4f2e329596350d7"; 
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=ar`;
 
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        // 1. تحديث بيانات الطقس على الشاشة
+        document.getElementById('temp').innerText = Math.round(data.main.temp) + "°";
+        document.getElementById('desc').innerText = data.weather[0].description;
+
+        // 2. تحديث حالة الطريق (هنا يحدث الربط)
+        updateRoadStatus(data.main.temp, data.weather[0].description);
+
+    } catch (error) {
+        console.log("خطأ في جلب البيانات:", error);
+    }
+}
+
+// وظيفة حالة الطريق (تأكد من وجودها)
+function updateRoadStatus(temp, desc) {
+    const statusCard = document.getElementById("road-status-card");
+    const statusText = document.getElementById("road-status-text");
+    
+    if (desc.includes("مطر") || desc.includes("عواصف")) {
+        statusCard.style.backgroundColor = "#f1c40f"; // أصفر
+        statusText.innerText = "⚠️ حالة الطريق: الحذر مطلوب بسبب الأمطار";
+    } else if (temp < 3) {
+        statusCard.style.backgroundColor = "#e74c3c"; // أحمر
+        statusText.innerText = "🚫 حالة الطريق: خطر الصقيع وتجمد الطريق";
+    } else {
+        statusCard.style.backgroundColor = "#27ae60"; // أخضر
+        statusText.innerText = "✅ حالة الطريق: جيدة والجو مستقر في بوحمدان";
+    }
+}
+
+window.onload = getWeather;
+        </script>
+        
     
 
     
