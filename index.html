@@ -576,6 +576,9 @@ function copyLink() {
 <footer>
  " تم إنشاء هذا الموقع من أجل بوحمدان.. موقع مخصص للتعريف بالمؤهلات السياحية الجبلية والمناظر الطبيعية الفريدة في المنطقة."   &copy; 2025
 </footer>
+    
+
+
  <script>
     let allImages = []; 
     let displayedCount = 0; 
@@ -607,13 +610,31 @@ function copyLink() {
         galleryDiv.innerHTML = "<p style='grid-column: 1/-1; color: #666;'>جاري جلب الصور...</p>";
         
         try {
-            // جلب البيانات من مستودعك
             const res = await fetch(`https://api.github.com/repos/Bcl09-lgtm/bouhamdan/contents/photos`);
             const files = await res.json();
             galleryDiv.innerHTML = "";
             
-            // تصفية الصور فقط وترتيبها من الأحدث
-            allImages = files.filter(f => f.name.match(/\.(jpg|jpeg|png|gif)$/i)).reverse();
+            // --- التعديل الجوهري هنا ---
+            // نقوم بترتيب الصور بحيث تظهر الأرقام (الجديدة) قبل الحروف (القديمة)
+            allImages = files.filter(f => f.name.match(/\.(jpg|jpeg|png|gif)$/i))
+                .sort((a, b) => {
+                    const aIsNew = /^\d+/.test(a.name); // هل الاسم يبدأ برقم؟
+                    const bIsNew = /^\d+/.test(b.name);
+
+                    // إذا كانت الصورتان جديدتان، نرتب الرقم الأكبر أولاً
+                    if (aIsNew && bIsNew) return b.name.localeCompare(a.name, undefined, {numeric: true});
+                    
+                    // إذا كانت إحداهما فقط جديدة، نعطيها الأولوية المطلقة لتظهر فوق الحروف
+                    if (aIsNew && !bIsNew) return -1;
+                    if (!aIsNew && bIsNew) return 1;
+
+                    // إذا كانت الصورتان قديمتان (حروف)، نرتب أبجدياً بشكل عكسي
+                    return b.name.localeCompare(a.name);
+                });
+
+            // تحديث السلايدر تلقائياً لأنه يتبع الترتيب الجديد
+            if (typeof buildSlider === 'function') buildSlider();
+            
             displayMoreImages();
         } catch (e) { 
             galleryDiv.innerHTML = "<p style='grid-column: 1/-1; color: red;'>حدث خطأ في الاتصال بمجلد الصور.</p>"; 
@@ -670,6 +691,7 @@ function copyLink() {
         document.getElementById('lightboxImg').src = allImages[currentIndex].download_url;
     }
  </script>
+
     <button id="backToTop" title="العودة للأعلى" style="
     position: fixed;
     bottom: 30px;
